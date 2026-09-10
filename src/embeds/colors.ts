@@ -1,0 +1,10 @@
+export const COLORS = {
+  PRIMARY:  0x5865F2,
+  SUCCESS:  0x22C55E,
+  WARNING:  0xF59E0B,
+  ERROR:    0xEF4444,
+  INFO:     0x3B82F6,
+  GIVEAWAY: 0xEAB308,
+  NUKE:     0xEF4444,
+  EMBED:    0x8B5CF6,
+} as const;
