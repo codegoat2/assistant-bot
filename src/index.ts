@@ -17,9 +17,11 @@ async function main(): Promise<void> {
   client.on(Events.ClientReady, async (c) => {
     logger.info(`Assistant logged in as ${c.user.username}`);
 
-    if (config.NODE_ENV !== 'production') {
+    try {
       const { registerCommands } = await import('./register');
       await registerCommands();
+    } catch (err) {
+      logger.error(`Failed to register commands: ${String(err)}`);
     }
 
     startNukeService();
