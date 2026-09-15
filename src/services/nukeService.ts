@@ -19,7 +19,7 @@ export function startNukeService(): void {
       const textChannel = channel as TextChannel;
 
       await textChannel.send({
-        embeds: [nukeEmbed(channel.name, nextNuke)],
+        embeds: [nukeEmbed(textChannel.name, nextNuke)],
       });
     } catch (err) {
       console.error('Nuke service error:', err);

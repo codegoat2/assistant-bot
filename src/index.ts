@@ -1,13 +1,13 @@
 import 'dotenv/config';
-import { Events, Interaction } from 'discord.js';
+import { Events, Interaction, ChatInputCommandInteraction } from 'discord.js';
 import { createAssistantClient, getAssistantClient } from './client';
 import { config } from './config/env';
 import { logger } from './utils/logger';
 import { handleStartGiveaway, handleEndGiveaway, handleListGiveaways } from './commands/giveaway';
 import { handleAnnounce, handleEmbed, handleBroadcast } from './commands/embed';
 import { handleBomb, handleToggleBomb } from './commands/nuke';
-import { startNukeService, startGiveawayCleanupWorker } from './services/nukeService';
-import { startGiveawayCleanupWorker as startGiveawayCleanup } from './services/giveawayService';
+import { startNukeService } from './services/nukeService';
+import { startGiveawayCleanupWorker } from './services/giveawayService';
 
 async function main(): Promise<void> {
   logger.info('RapidEx Assistant Bot starting...');
@@ -23,45 +23,47 @@ async function main(): Promise<void> {
     }
 
     startNukeService();
-    startGiveawayCleanup();
+    startGiveawayCleanupWorker();
   });
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
+    if (!interaction.isChatInputCommand()) return;
+
+    const cmd = interaction as ChatInputCommandInteraction;
+
     try {
-      if (interaction.isChatInputCommand()) {
-        switch (interaction.commandName) {
-          case 'giveaway-start':    await handleStartGiveaway(interaction); break;
-          case 'giveaway-end':      await handleEndGiveaway(interaction); break;
-          case 'giveaway-list':     await handleListGiveaways(interaction); break;
-          case 'announce':          await handleAnnounce(interaction); break;
-          case 'embed':             await handleEmbed(interaction); break;
-          case 'broadcast':         await handleBroadcast(interaction); break;
-          case 'bomb':              await handleBomb(interaction); break;
-          case 'toggle-bomb':       await handleToggleBomb(interaction); break;
-          default:
-            logger.warn({ commandName: interaction.commandName }, 'Unknown assistant command');
-            await interaction.reply({ content: '❌ Unknown command.', ephemeral: true });
-        }
+      switch (cmd.commandName) {
+        case 'giveaway-start':  await handleStartGiveaway(cmd); break;
+        case 'giveaway-end':    await handleEndGiveaway(cmd); break;
+        case 'giveaway-list':   await handleListGiveaways(cmd); break;
+        case 'announce':        await handleAnnounce(cmd); break;
+        case 'embed':           await handleEmbed(cmd); break;
+        case 'broadcast':       await handleBroadcast(cmd); break;
+        case 'bomb':            await handleBomb(cmd); break;
+        case 'toggle-bomb':     await handleToggleBomb(cmd); break;
+        default:
+          logger.warn(`Unknown assistant command: ${cmd.commandName}`);
+          await cmd.reply({ content: '❌ Unknown command.', ephemeral: true });
       }
     } catch (err) {
-      logger.error({ err, commandName: (interaction as any).commandName }, 'Assistant interaction error');
+      logger.error(`Assistant interaction error for ${cmd.commandName}: ${String(err)}`);
       const msg = '❌ An error occurred. Please try again.';
       try {
-        if (interaction.replied || interaction.deferred) {
-          await interaction.followUp({ content: msg, ephemeral: true });
+        if (cmd.replied || cmd.deferred) {
+          await cmd.followUp({ content: msg, ephemeral: true });
         } else {
-          await interaction.reply({ content: msg, ephemeral: true });
+          await cmd.reply({ content: msg, ephemeral: true });
         }
       } catch { /* interaction timed out */ }
     }
   });
 
   client.on(Events.Error, (err) => {
-    logger.error({ err }, 'Assistant Discord client error');
+    logger.error(`Assistant Discord client error: ${String(err)}`);
   });
 
   client.on(Events.Warn, (msg) => {
-    logger.warn({ msg }, 'Assistant Discord client warning');
+    logger.warn(`Assistant Discord client warning: ${msg}`);
   });
 
   await client.login(config.DISCORD_TOKEN);

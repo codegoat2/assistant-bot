@@ -33,7 +33,7 @@ export async function handleBomb(interaction: ChatInputCommandInteraction): Prom
     const nextNuke = new Date(Date.now() + 60 * 60 * 1000);
 
     const { nukeEmbed } = await import('../embeds');
-    await textChannel.send({ embeds: [nukeEmbed(channel.name, nextNuke)] });
+    await textChannel.send({ embeds: [nukeEmbed(textChannel.name ?? 'channel', nextNuke)] });
 
     await interaction.editReply('💣 Channel bombed!');
   } catch (err) {
