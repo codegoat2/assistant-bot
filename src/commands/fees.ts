@@ -54,7 +54,7 @@ export async function handleFees(
     );
 
     await interaction.editReply({
-      content: 'Step 1: Select cryptocurrency',
+      content: '**Step 1 of 3** — Select the cryptocurrency you want to exchange',
       components: [row1],
     });
   } catch (err) {
@@ -97,12 +97,13 @@ export async function handleFeesInteraction(interaction: Interaction): Promise<v
         fiatSelect
       );
 
-      await interaction.update({
-        content: `Step 2: Select fiat currency (${crypto} → ?)`,
+      await interaction.reply({
+        content: `**Step 2 of 3** — Select your fiat currency (${crypto} → ?)`,
         components: [row],
+        ephemeral: true,
       });
     } else if (customId.startsWith('fees_select_fiat_')) {
-      const [, , crypto, userId2] = customId.split('_');
+      const [, , , crypto, userId2] = customId.split('_');
       const fiat = interaction.values[0];
 
       if (userId2 !== userId) {
@@ -129,7 +130,7 @@ export async function handleFeesInteraction(interaction: Interaction): Promise<v
       );
 
       await interaction.update({
-        content: `Step 3: Select payment method (${crypto} → ${fiat})`,
+        content: `**Step 3 of 3** — Select your payment method (${crypto} → ${fiat})`,
         components: [row],
       });
     } else if (customId.startsWith('fees_select_payment_')) {
