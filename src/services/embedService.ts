@@ -1,7 +1,6 @@
-import { Client, TextChannel, EmbedBuilder } from 'discord.js';
+import { TextChannel, EmbedBuilder } from 'discord.js';
 import { getAssistantClient } from '../client';
 import { announcementEmbed } from '../embeds';
-import { config } from '../config/env';
 
 export async function sendAnnouncement(
   channelId: string,
@@ -11,9 +10,7 @@ export async function sendAnnouncement(
   const client = getAssistantClient();
   const channel = await client.channels.fetch(channelId);
   if (!channel || !channel.isTextBased()) throw new Error('Channel not found');
-
-  const textChannel = channel as TextChannel;
-  await textChannel.send({ embeds: [announcementEmbed(title, content)] });
+  await (channel as TextChannel).send({ embeds: [announcementEmbed(title, content)] });
 }
 
 export async function sendCustomEmbed(
@@ -25,11 +22,14 @@ export async function sendCustomEmbed(
   const client = getAssistantClient();
   const channel = await client.channels.fetch(channelId);
   if (!channel || !channel.isTextBased()) throw new Error('Channel not found');
-
-  const textChannel = channel as TextChannel;
-  await textChannel.send({
+  await (channel as TextChannel).send({
     embeds: [
-      new EmbedBuilder().setColor(color).setTitle(title).setDescription(description).setTimestamp(),
+      new EmbedBuilder()
+        .setColor(color)
+        .setTitle(title)
+        .setDescription(description)
+        .setTimestamp()
+        .toJSON(),
     ],
   });
 }

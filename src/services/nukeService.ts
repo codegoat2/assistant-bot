@@ -1,4 +1,4 @@
-import { Client, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 import { getAssistantClient } from '../client';
 import { nukeEmbed } from '../embeds';
 import { config } from '../config/env';
@@ -15,8 +15,8 @@ export function startNukeService(): void {
       const channel = await client.channels.fetch(channelId);
       if (!channel || !channel.isTextBased()) return;
 
-      const nextNuke = new Date(Date.now() + 60 * 60 * 1000);
       const textChannel = channel as TextChannel;
+      const nextNuke = new Date(Date.now() + 60 * 60 * 1000);
 
       await textChannel.send({
         embeds: [nukeEmbed(textChannel.name, nextNuke)],

@@ -1,6 +1,5 @@
-import { Client, TextChannel, EmbedBuilder } from 'discord.js';
+import { TextChannel, EmbedBuilder } from 'discord.js';
 import { getAssistantClient } from '../client';
-import { config } from '../config/env';
 
 type GiveawayData = {
   messageId: string;
@@ -20,10 +19,8 @@ export function createGiveaway(
 ): GiveawayData {
   const messageId = `giveaway-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const endsAt = new Date(Date.now() + durationMinutes * 60 * 1000);
-
   const data: GiveawayData = { messageId, channelId, endsAt, winners, prize };
   giveaways.set(messageId, data);
-
   return data;
 }
 
@@ -48,14 +45,13 @@ export async function endGiveaway(messageId: string): Promise<string | null> {
     const channel = await client.channels.fetch(giveaway.channelId);
     if (!channel || !channel.isTextBased()) return null;
 
-    const textChannel = channel as TextChannel;
-
-    await textChannel.send({
+    await (channel as TextChannel).send({
       embeds: [
         new EmbedBuilder()
           .setColor(0x22C55E)
           .setTitle('🎉 Giveaway Ended')
-          .setDescription(`Prize: **${giveaway.prize}**\nWinners: **${giveaway.winners}**`),
+          .setDescription(`Prize: **${giveaway.prize}**\nWinners: **${giveaway.winners}**`)
+          .toJSON(),
       ],
     });
   } catch (err) {

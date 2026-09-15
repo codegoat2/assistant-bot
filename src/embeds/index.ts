@@ -10,7 +10,8 @@ export function giveawayEmbed(title: string, description: string, endsAt: Date, 
       { name: 'Ends', value: `<t:${Math.floor(endsAt.getTime() / 1000)}:R>`, inline: true },
       { name: 'Winners', value: String(winners), inline: true },
     )
-    .setTimestamp();
+    .setTimestamp()
+    .toJSON();
 }
 
 export function nukeEmbed(channelName: string, nextNuke: Date) {
@@ -23,7 +24,8 @@ export function nukeEmbed(channelName: string, nextNuke: Date) {
     .addFields(
       { name: 'Next Nuking', value: `<t:${Math.floor(nextNuke.getTime() / 1000)}:R>`, inline: true },
     )
-    .setFooter({ text: 'Advertising is strictly prohibited' });
+    .setFooter({ text: 'Advertising is strictly prohibited' })
+    .toJSON();
 }
 
 export function ltcRatesEmbed(eurPrice: string, usdPrice: string, nextNuke: Date) {
@@ -37,7 +39,8 @@ export function ltcRatesEmbed(eurPrice: string, usdPrice: string, nextNuke: Date
     .addFields(
       { name: 'Do you know that?', value: 'The average person laughs 10 times a day!' },
     )
-    .setFooter({ text: 'Easy System — Fast & Safe Support!' });
+    .setFooter({ text: 'Easy System — Fast & Safe Support!' })
+    .toJSON();
 }
 
 export function announcementEmbed(title: string, content: string) {
@@ -45,5 +48,6 @@ export function announcementEmbed(title: string, content: string) {
     .setColor(COLORS.EMBED)
     .setTitle(title)
     .setDescription(content)
-    .setTimestamp();
+    .setTimestamp()
+    .toJSON();
 }

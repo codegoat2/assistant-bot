@@ -1,5 +1,5 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, TextChannel } from 'discord.js';
-import { createGiveaway, getGiveaway, deleteGiveaway, getAllGiveaways, endGiveaway } from '../services/giveawayService';
+import { SlashCommandBuilder, ChatInputCommandInteraction, TextChannel, EmbedBuilder } from 'discord.js';
+import { createGiveaway, deleteGiveaway, getAllGiveaways, endGiveaway } from '../services/giveawayService';
 import { giveawayEmbed } from '../embeds';
 import { config } from '../config/env';
 
@@ -41,19 +41,15 @@ export async function handleStartGiveaway(interaction: ChatInputCommandInteracti
     }
 
     const textChannel = channel as TextChannel;
-    const endsAt = giveaway.endsAt;
-
-    const embed = giveawayEmbed(`${prize}`, 'React with 🎉 to enter!', endsAt, winners);
-
     const message = await textChannel.send({
-      embeds: [embed],
+      embeds: [giveawayEmbed(`${prize}`, 'React with 🎉 to enter!', giveaway.endsAt, winners)],
     });
 
     await message.react('🎉');
 
     await interaction.editReply({
       embeds: [
-        new (await import('discord.js')).EmbedBuilder()
+        new EmbedBuilder()
           .setColor(0x22C55E)
           .setTitle('✅ Giveaway Started')
           .addFields(
@@ -61,7 +57,8 @@ export async function handleStartGiveaway(interaction: ChatInputCommandInteracti
             { name: 'Duration', value: `${duration} minutes`, inline: true },
             { name: 'Winners', value: String(winners), inline: true },
           )
-          .setTimestamp(),
+          .setTimestamp()
+          .toJSON(),
       ],
     });
   } catch (err) {
@@ -83,10 +80,11 @@ export async function handleEndGiveaway(interaction: ChatInputCommandInteraction
 
   await interaction.editReply({
     embeds: [
-      new (await import('discord.js')).EmbedBuilder()
+      new EmbedBuilder()
         .setColor(0x22C55E)
         .setTitle('✅ Giveaway Ended')
-        .setDescription(`Prize: **${prize}**`),
+        .setDescription(`Prize: **${prize}**`)
+        .toJSON(),
     ],
   });
 }
@@ -110,11 +108,12 @@ export async function handleListGiveaways(interaction: ChatInputCommandInteracti
 
   await interaction.editReply({
     embeds: [
-      new (await import('discord.js')).EmbedBuilder()
+      new EmbedBuilder()
         .setColor(0xEAB308)
         .setTitle('🎉 Active Giveaways')
         .setDescription(lines)
-        .setTimestamp(),
+        .setTimestamp()
+        .toJSON(),
     ],
   });
 }
