@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, TextChannel, EmbedBuilder } from 'discord.js';
 import { createGiveaway, deleteGiveaway, getAllGiveaways, endGiveaway } from '../services/giveawayService';
-import { giveawayEmbed } from '../embeds';
+import { giveawayEmbed, E } from '../embeds';
 import { config } from '../config/env';
 
 export const startGiveawayCommand = new SlashCommandBuilder()
@@ -36,7 +36,7 @@ export async function handleStartGiveaway(interaction: ChatInputCommandInteracti
     const client = interaction.client;
     const channel = await client.channels.fetch(channelId);
     if (!channel || !channel.isTextBased()) {
-      await interaction.editReply('❌ Giveaway channel not found.');
+      await interaction.editReply(`${E.NO} Giveaway channel not found.`);
       return;
     }
 
@@ -51,7 +51,7 @@ export async function handleStartGiveaway(interaction: ChatInputCommandInteracti
       embeds: [
         new EmbedBuilder()
           .setColor(0x22C55E)
-          .setTitle('✅ Giveaway Started')
+          .setTitle(`${E.CHECK} Giveaway Started`)
           .addFields(
             { name: 'Prize', value: prize, inline: true },
             { name: 'Duration', value: `${duration} minutes`, inline: true },
@@ -63,7 +63,7 @@ export async function handleStartGiveaway(interaction: ChatInputCommandInteracti
     });
   } catch (err) {
     deleteGiveaway(giveaway.messageId);
-    await interaction.editReply(`❌ Failed to start giveaway: ${String(err)}`);
+    await interaction.editReply(`${E.NO} Failed to start giveaway: ${String(err)}`);
   }
 }
 
@@ -74,7 +74,7 @@ export async function handleEndGiveaway(interaction: ChatInputCommandInteraction
   const prize = await endGiveaway(messageId);
 
   if (!prize) {
-    await interaction.editReply('❌ Giveaway not found or already ended.');
+    await interaction.editReply(`${E.NO} Giveaway not found or already ended.`);
     return;
   }
 
@@ -82,7 +82,7 @@ export async function handleEndGiveaway(interaction: ChatInputCommandInteraction
     embeds: [
       new EmbedBuilder()
         .setColor(0x22C55E)
-        .setTitle('✅ Giveaway Ended')
+        .setTitle(`${E.CHECK} Giveaway Ended`)
         .setDescription(`Prize: **${prize}**`)
         .toJSON(),
     ],
@@ -110,7 +110,7 @@ export async function handleListGiveaways(interaction: ChatInputCommandInteracti
     embeds: [
       new EmbedBuilder()
         .setColor(0xEAB308)
-        .setTitle('🎉 Active Giveaways')
+        .setTitle(`${E.BUY} Active Giveaways`)
         .setDescription(lines)
         .setTimestamp()
         .toJSON(),

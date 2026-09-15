@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { startNukeService, stopNukeService } from '../services/nukeService';
-import { getGuildIconUrl, nukeEmbed } from '../embeds';
+import { getGuildIconUrl, nukeEmbed, E } from '../embeds';
 import { config } from '../config/env';
 
 export const bombCommand = new SlashCommandBuilder()
@@ -26,7 +26,7 @@ export async function handleBomb(interaction: ChatInputCommandInteraction): Prom
     const client = interaction.client;
     const channel = await client.channels.fetch(channelId);
     if (!channel || !channel.isTextBased()) {
-      await interaction.editReply('❌ Channel not found.');
+      await interaction.editReply(`${E.NO} Channel not found.`);
       return;
     }
 
@@ -39,9 +39,9 @@ export async function handleBomb(interaction: ChatInputCommandInteraction): Prom
       embeds: [nukeEmbed(textChannel.name ?? 'channel', nextNuke, guildIconUrl)] 
     });
 
-    await interaction.editReply('💣 Channel bombed!');
+    await interaction.editReply(`${E.LOCK} Channel bombed!`);
   } catch (err) {
-    await interaction.editReply(`❌ Failed: ${String(err)}`);
+    await interaction.editReply(`${E.NO} Failed: ${String(err)}`);
   }
 }
 
@@ -52,9 +52,9 @@ export async function handleToggleBomb(interaction: ChatInputCommandInteraction)
 
   if (action === 'start') {
     startNukeService();
-    await interaction.editReply('✅ Automatic nuking started.');
+    await interaction.editReply(`${E.CHECK} Automatic nuking started.`);
   } else {
     stopNukeService();
-    await interaction.editReply('✅ Automatic nuking stopped.');
+    await interaction.editReply(`${E.CHECK} Automatic nuking stopped.`);
   }
 }

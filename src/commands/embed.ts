@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { sendAnnouncement, sendCustomEmbed, broadcastToAllChannels } from '../services/embedService';
 import { config } from '../config/env';
+import { E } from '../embeds';
 
 export const announceCommand = new SlashCommandBuilder()
   .setName('announce')
@@ -35,9 +36,9 @@ export async function handleAnnounce(interaction: ChatInputCommandInteraction): 
 
   try {
     await sendAnnouncement(channelId, title, content);
-    await interaction.editReply('✅ Announcement sent.');
+    await interaction.editReply(`${E.CHECK} Announcement sent.`);
   } catch (err) {
-    await interaction.editReply(`❌ Failed: ${String(err)}`);
+    await interaction.editReply(`${E.NO} Failed: ${String(err)}`);
   }
 }
 
@@ -50,9 +51,9 @@ export async function handleEmbed(interaction: ChatInputCommandInteraction): Pro
 
   try {
     await sendCustomEmbed(channelId, title, description, 0x8B5CF6);
-    await interaction.editReply('✅ Embed sent.');
+    await interaction.editReply(`${E.CHECK} Embed sent.`);
   } catch (err) {
-    await interaction.editReply(`❌ Failed: ${String(err)}`);
+    await interaction.editReply(`${E.NO} Failed: ${String(err)}`);
   }
 }
 
@@ -65,14 +66,14 @@ export async function handleBroadcast(interaction: ChatInputCommandInteraction):
   const channelIds = channelsRaw.split(',').map(id => id.trim()).filter(Boolean);
 
   if (channelIds.length === 0) {
-    await interaction.editReply('❌ No valid channel IDs provided.');
+    await interaction.editReply(`${E.NO} No valid channel IDs provided.`);
     return;
   }
 
   try {
     await broadcastToAllChannels(channelIds, title, content);
-    await interaction.editReply(`✅ Broadcasted to ${channelIds.length} channel(s).`);
+    await interaction.editReply(`${E.CHECK} Broadcasted to ${channelIds.length} channel(s).`);
   } catch (err) {
-    await interaction.editReply(`❌ Failed: ${String(err)}`);
+    await interaction.editReply(`${E.NO} Failed: ${String(err)}`);
   }
 }
