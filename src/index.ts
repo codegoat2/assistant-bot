@@ -6,6 +6,7 @@ import { logger } from './utils/logger';
 import { handleStartGiveaway, handleEndGiveaway, handleListGiveaways } from './commands/giveaway';
 import { handleAnnounce, handleEmbed, handleBroadcast } from './commands/embed';
 import { handleBomb, handleToggleBomb } from './commands/nuke';
+import { handleFees, handleFeesInteraction, handleFeesModal } from './commands/fees';
 import { startNukeService } from './services/nukeService';
 import { startGiveawayCleanupWorker } from './services/giveawayService';
 
@@ -29,6 +30,18 @@ async function main(): Promise<void> {
   });
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
+    // Handle string select menu interactions (dropdowns)
+    if (interaction.isStringSelectMenu()) {
+      await handleFeesInteraction(interaction);
+      return;
+    }
+
+    // Handle modal submissions
+    if (interaction.isModalSubmit()) {
+      await handleFeesModal(interaction);
+      return;
+    }
+
     if (!interaction.isChatInputCommand()) return;
 
     const cmd = interaction as ChatInputCommandInteraction;
@@ -43,6 +56,7 @@ async function main(): Promise<void> {
         case 'broadcast':       await handleBroadcast(cmd); break;
         case 'bomb':            await handleBomb(cmd); break;
         case 'toggle-bomb':     await handleToggleBomb(cmd); break;
+        case 'fees':            await handleFees(cmd); break;
         default:
           logger.warn(`Unknown assistant command: ${cmd.commandName}`);
           await cmd.reply({ content: '❌ Unknown command.', ephemeral: true });

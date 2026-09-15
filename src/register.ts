@@ -4,6 +4,7 @@ import { config } from './config/env';
 import { startGiveawayCommand, endGiveawayCommand, listGiveawaysCommand } from './commands/giveaway';
 import { announceCommand, embedCommand, broadcastCommand } from './commands/embed';
 import { bombCommand, toggleBombCommand } from './commands/nuke';
+import { feesCommand } from './commands/fees';
 import { logger } from './utils/logger';
 
 const commands = [
@@ -15,6 +16,7 @@ const commands = [
   broadcastCommand.toJSON(),
   bombCommand.toJSON(),
   toggleBombCommand.toJSON(),
+  feesCommand.toJSON(),
 ];
 
 export async function registerCommands(): Promise<void> {
