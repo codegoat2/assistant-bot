@@ -1,6 +1,6 @@
 import { TextChannel } from 'discord.js';
 import { getAssistantClient } from '../client';
-import { nukeEmbed } from '../embeds';
+import { nukeEmbed, getGuildIconUrl } from '../embeds';
 import { config } from '../config/env';
 
 let bombInterval: NodeJS.Timeout | null = null;
@@ -16,10 +16,12 @@ export function startNukeService(): void {
       if (!channel || !channel.isTextBased()) return;
 
       const textChannel = channel as TextChannel;
+      const guild = textChannel.guild;
+      const guildIconUrl = getGuildIconUrl(guild);
       const nextNuke = new Date(Date.now() + 60 * 60 * 1000);
 
       await textChannel.send({
-        embeds: [nukeEmbed(textChannel.name, nextNuke)],
+        embeds: [nukeEmbed(textChannel.name, nextNuke, guildIconUrl)],
       });
     } catch (err) {
       console.error('Nuke service error:', err);

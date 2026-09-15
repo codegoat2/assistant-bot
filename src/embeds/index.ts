@@ -1,8 +1,16 @@
-import { EmbedBuilder } from 'discord.js';
-import { COLORS } from './colors';
+import { EmbedBuilder, Guild } from 'discord.js';
+import { COLORS, BANNER_URL } from './colors';
 
-export function giveawayEmbed(title: string, description: string, endsAt: Date, winners: number) {
-  return new EmbedBuilder()
+/**
+ * Extract guild icon URL to use as embed thumbnail (logo)
+ */
+export function getGuildIconUrl(guild: Guild | null): string | null {
+  if (!guild || !guild.icon) return null;
+  return guild.iconURL({ size: 512 }) ?? null;
+}
+
+export function giveawayEmbed(title: string, description: string, endsAt: Date, winners: number, guildIconUrl?: string | null) {
+  const embed = new EmbedBuilder()
     .setColor(COLORS.GIVEAWAY)
     .setTitle(`🎉 ${title}`)
     .setDescription(description)
@@ -11,43 +19,73 @@ export function giveawayEmbed(title: string, description: string, endsAt: Date, 
       { name: 'Winners', value: String(winners), inline: true },
     )
     .setTimestamp()
-    .toJSON();
+    .setImage(BANNER_URL)
+    .setFooter({ text: 'RapidEx · Giveaway' });
+
+  if (guildIconUrl) {
+    embed.setThumbnail(guildIconUrl);
+  }
+
+  return embed.toJSON();
 }
 
-export function nukeEmbed(channelName: string, nextNuke: Date) {
-  return new EmbedBuilder()
+export function nukeEmbed(channelName: string, nextNuke: Date, guildIconUrl?: string | null) {
+  const embed = new EmbedBuilder()
     .setColor(COLORS.NUKE)
-    .setTitle('Channel BOMBED')
+    .setTitle('🧹 Channel Bombed')
     .setDescription(
-      `This channel gets nuked **every hour** to maintain a clean environment.\n\nLearn More About Easy Exchange`,
+      `This channel gets **cleaned every hour** to maintain a professional environment.\n\n` +
+      `**Why?** This ensures clean, organized communication for all members.\n\n` +
+      `All messages are removed to start fresh. Follow server guidelines to avoid deletion.\n\n` +
+      `${COLORS.WARNING && '✨'} Next cleaning: <t:${Math.floor(nextNuke.getTime() / 1000)}:R>`,
     )
     .addFields(
-      { name: 'Next Nuking', value: `<t:${Math.floor(nextNuke.getTime() / 1000)}:R>`, inline: true },
+      { name: '📋 Channel', value: `#${channelName || 'unknown'}`, inline: true },
+      { name: '⏰ Next Bomb', value: `<t:${Math.floor(nextNuke.getTime() / 1000)}:R>`, inline: true },
     )
-    .setFooter({ text: 'Advertising is strictly prohibited' })
-    .toJSON();
+    .setFooter({ text: 'RapidEx · Automatic Channel Maintenance' })
+    .setImage(BANNER_URL)
+    .setTimestamp();
+
+  if (guildIconUrl) {
+    embed.setThumbnail(guildIconUrl);
+  }
+
+  return embed.toJSON();
 }
 
-export function ltcRatesEmbed(eurPrice: string, usdPrice: string, nextNuke: Date) {
-  return new EmbedBuilder()
+export function ltcRatesEmbed(eurPrice: string, usdPrice: string, nextNuke: Date, guildIconUrl?: string | null) {
+  const embed = new EmbedBuilder()
     .setColor(COLORS.INFO)
-    .setTitle('Current LTC Rates:')
+    .setTitle('💱 Current LTC Rates')
     .addFields(
-      { name: 'EUR', value: `€${eurPrice}`, inline: true },
-      { name: 'USD', value: `$${usdPrice}`, inline: true },
+      { name: '€ EUR', value: `**€${eurPrice}**`, inline: true },
+      { name: '$ USD', value: `**$${usdPrice}**`, inline: true },
+      { name: '📝 Fun Fact', value: 'The average person laughs 10 times a day!' },
     )
-    .addFields(
-      { name: 'Do you know that?', value: 'The average person laughs 10 times a day!' },
-    )
-    .setFooter({ text: 'Easy System — Fast & Safe Support!' })
-    .toJSON();
+    .setFooter({ text: 'RapidEx · Live Crypto Rates' })
+    .setImage(BANNER_URL)
+    .setTimestamp();
+
+  if (guildIconUrl) {
+    embed.setThumbnail(guildIconUrl);
+  }
+
+  return embed.toJSON();
 }
 
-export function announcementEmbed(title: string, content: string) {
-  return new EmbedBuilder()
+export function announcementEmbed(title: string, content: string, guildIconUrl?: string | null) {
+  const embed = new EmbedBuilder()
     .setColor(COLORS.EMBED)
-    .setTitle(title)
+    .setTitle(`📢 ${title}`)
     .setDescription(content)
-    .setTimestamp()
-    .toJSON();
+    .setFooter({ text: 'RapidEx · Announcement' })
+    .setImage(BANNER_URL)
+    .setTimestamp();
+
+  if (guildIconUrl) {
+    embed.setThumbnail(guildIconUrl);
+  }
+
+  return embed.toJSON();
 }

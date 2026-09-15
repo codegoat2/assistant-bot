@@ -19,6 +19,8 @@ import {
   CRYPTOCURRENCIES,
   FIAT_CURRENCIES,
 } from '../services/feeService';
+import { getGuildIconUrl } from '../embeds';
+import { COLORS, BANNER_URL } from '../embeds/colors';
 import { logger } from '../utils/logger';
 
 export const feesCommand = new SlashCommandBuilder()
@@ -209,18 +211,27 @@ export async function handleFeesModal(
       // Calculate fees
       const fees = calculateFees(amount, paymentMethod);
 
-      // Create embed
+      // Get guild icon for thumbnail
+      const guild = interaction.guild;
+      const guildIconUrl = getGuildIconUrl(guild);
+
+      // Create embed with RapidEx branding
       const embed = new EmbedBuilder()
-        .setColor(0x8B5CF6)
-        .setTitle('💱 Fee Calculation')
+        .setColor(COLORS.SUCCESS)
+        .setTitle('💱 RapidEx Fee Calculation')
         .setDescription(
           formatFeeBreakdown(crypto, fiat, paymentMethod, amount, fees)
         )
         .setFooter({
-          text: `Fees calculated with ${fees.feePercentage}% default fee`,
+          text: `RapidEx · Secure Exchange`,
           iconURL: interaction.client.user?.displayAvatarURL(),
         })
+        .setImage(BANNER_URL)
         .setTimestamp();
+
+      if (guildIconUrl) {
+        embed.setThumbnail(guildIconUrl);
+      }
 
       await interaction.reply({
         embeds: [embed],

@@ -1,5 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { startNukeService, stopNukeService } from '../services/nukeService';
+import { getGuildIconUrl, nukeEmbed } from '../embeds';
 import { config } from '../config/env';
 
 export const bombCommand = new SlashCommandBuilder()
@@ -30,10 +31,13 @@ export async function handleBomb(interaction: ChatInputCommandInteraction): Prom
     }
 
     const textChannel = channel as any;
+    const guild = textChannel.guild;
+    const guildIconUrl = getGuildIconUrl(guild);
     const nextNuke = new Date(Date.now() + 60 * 60 * 1000);
 
-    const { nukeEmbed } = await import('../embeds');
-    await textChannel.send({ embeds: [nukeEmbed(textChannel.name ?? 'channel', nextNuke)] });
+    await textChannel.send({ 
+      embeds: [nukeEmbed(textChannel.name ?? 'channel', nextNuke, guildIconUrl)] 
+    });
 
     await interaction.editReply('💣 Channel bombed!');
   } catch (err) {

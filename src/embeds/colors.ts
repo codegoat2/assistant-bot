@@ -1,10 +1,18 @@
+/** RapidEx banner image — shown at the bottom of embeds. */
+export const BANNER_URL =
+  'https://cdn.discordapp.com/attachments/1545857939808587796/1547346475162271755/RapidEx_Banner.png';
+
+/** Brand colors used across all RapidEx embeds. Orange & black theme. */
 export const COLORS = {
-  PRIMARY:  0x5865F2,
-  SUCCESS:  0x22C55E,
-  WARNING:  0xF59E0B,
-  ERROR:    0xEF4444,
-  INFO:     0x3B82F6,
-  GIVEAWAY: 0xEAB308,
-  NUKE:     0xEF4444,
-  EMBED:    0x8B5CF6,
+  PRIMARY:   0xFF6B00 as const,  // RapidEx orange
+  SUCCESS:   0xFF8C00 as const,  // Amber orange — positive actions
+  WARNING:   0xFFB347 as const,  // Light orange — attention
+  ERROR:     0xED4245 as const,  // Red — errors / cancellations
+  INFO:      0xFF6B00 as const,  // Orange — informational
+  ESCROW:    0xE65C00 as const,  // Deep orange — funds locked
+  COMPLETED: 0xFF6B00 as const,  // Orange — completed
+  DISPUTED:  0xED4245 as const,  // Red — disputes
+  GIVEAWAY:  0xFF6B00 as const,  // Orange — giveaways
+  NUKE:      0xFF6B00 as const,  // Orange — channel bomb
+  EMBED:     0xFF6B00 as const,  // Orange — embeds
 } as const;
