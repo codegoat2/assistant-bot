@@ -39,11 +39,6 @@ export async function handlePostFeeEmbed(
           inline: false,
         },
         {
-          name: `${E.PAYPAL} PayPal`,
-          value: `Minimum Fee: **$${MINIMUM_FEES.PAYPAL} USD**`,
-          inline: true,
-        },
-        {
           name: `${E.REVOLUT} Revolut`,
           value: `Minimum Fee: **$${MINIMUM_FEES.REVOLUT} USD**`,
           inline: true,
@@ -54,12 +49,32 @@ export async function handlePostFeeEmbed(
           inline: true,
         },
         {
-          name: `${E.CASHAPP} Cash In Person`,
-          value: `Minimum Fee: **$${MINIMUM_FEES.CASH_IN_PERSON} USD**`,
+          name: `${E.PAYPAL} PayPal`,
+          value: `Minimum Fee: **$${MINIMUM_FEES.PAYPAL} USD**`,
           inline: true,
         },
         {
-          name: `Other Methods`,
+          name: `${E.DEBTCARD} Wise`,
+          value: `Minimum Fee: **$${MINIMUM_FEES.WISE} USD**`,
+          inline: true,
+        },
+        {
+          name: `${E.BINANCE} Binance Gift Card`,
+          value: `Minimum Fee: **$${MINIMUM_FEES.OTHER} USD**`,
+          inline: true,
+        },
+        {
+          name: `${E.PAYSAFE} Paysafe Card`,
+          value: `Minimum Fee: **$${MINIMUM_FEES.OTHER} USD**`,
+          inline: true,
+        },
+        {
+          name: `${E.APPLE} Apple Pay`,
+          value: `Minimum Fee: **$${MINIMUM_FEES.OTHER} USD**`,
+          inline: true,
+        },
+        {
+          name: `${E.CASHAPP} CashApp`,
           value: `Minimum Fee: **$${MINIMUM_FEES.OTHER} USD**`,
           inline: true,
         }
