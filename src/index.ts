@@ -7,6 +7,7 @@ import { handleStartGiveaway, handleEndGiveaway, handleListGiveaways } from './c
 import { handleAnnounce, handleEmbed, handleBroadcast } from './commands/embed';
 import { handleBomb, handleToggleBomb } from './commands/nuke';
 import { handleFees, handleFeesInteraction, handleFeesModal } from './commands/fees';
+import { handlePostFeeEmbed } from './commands/postFeeEmbed';
 import { startNukeService } from './services/nukeService';
 import { startGiveawayCleanupWorker } from './services/giveawayService';
 
@@ -57,6 +58,7 @@ async function main(): Promise<void> {
         case 'bomb':            await handleBomb(cmd); break;
         case 'toggle-bomb':     await handleToggleBomb(cmd); break;
         case 'fees':            await handleFees(cmd); break;
+        case 'postfeeembed':    await handlePostFeeEmbed(cmd); break;
         default:
           logger.warn(`Unknown assistant command: ${cmd.commandName}`);
           await cmd.reply({ content: '❌ Unknown command.', ephemeral: true });
