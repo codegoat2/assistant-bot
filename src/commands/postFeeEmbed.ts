@@ -49,11 +49,6 @@ export async function handlePostFeeEmbed(
           inline: true,
         },
         {
-          name: `${E.WISE} Wise`,
-          value: `Minimum Fee: **$${MINIMUM_FEES.WISE} USD**`,
-          inline: true,
-        },
-        {
           name: `${E.BANK} Bank Transfer`,
           value: `Minimum Fee: **$${MINIMUM_FEES.BANK_TRANSFER} USD**`,
           inline: true,
@@ -90,9 +85,11 @@ This ensures competitive rates while maintaining service quality.`,
     }
 
     // Send the embed to the channel (not ephemeral)
-    await interaction.channel?.send({
-      embeds: [embed],
-    });
+    if (interaction.channel && 'send' in interaction.channel) {
+      await interaction.channel.send({
+        embeds: [embed],
+      });
+    }
 
     // Confirm to the user (ephemeral)
     await interaction.editReply({
@@ -100,13 +97,11 @@ This ensures competitive rates while maintaining service quality.`,
     });
 
     logger.info(
-      { channelId: interaction.channelId, guildId: interaction.guildId },
-      'Fee embed posted'
+      `Fee embed posted to channel ${interaction.channelId} in guild ${interaction.guildId}`
     );
   } catch (err) {
     logger.error(
-      { error: String(err), guildId: interaction.guildId },
-      'Failed to post fee embed'
+      `Failed to post fee embed: ${String(err)}`
     );
     await interaction.editReply(
       `❌ Failed to post fee embed: ${String(err)}`
