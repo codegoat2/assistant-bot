@@ -31,6 +31,15 @@ async function main(): Promise<void> {
   });
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
+    // Handle button interactions
+    if (interaction.isButton()) {
+      if (interaction.customId === 'fee_calc_start') {
+        // Start the fee calculation flow (same as /fees command)
+        await handleFees(interaction);
+      }
+      return;
+    }
+
     // Handle string select menu interactions (dropdowns)
     if (interaction.isStringSelectMenu()) {
       await handleFeesInteraction(interaction);

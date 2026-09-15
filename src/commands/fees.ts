@@ -29,9 +29,12 @@ export const feesCommand = new SlashCommandBuilder()
   .setDefaultMemberPermissions(0); // Admin only
 
 export async function handleFees(
-  interaction: ChatInputCommandInteraction
+  interaction: ChatInputCommandInteraction | any
 ): Promise<void> {
-  await interaction.deferReply({ ephemeral: true });
+  // Handle both slash commands and button interactions
+  if (!interaction.deferred && !interaction.replied) {
+    await interaction.deferReply({ ephemeral: true });
+  }
 
   try {
     // Step 1: Ask for crypto currency

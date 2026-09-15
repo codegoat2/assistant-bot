@@ -3,6 +3,9 @@ import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionFlagsBits,
+  ButtonBuilder,
+  ButtonStyle,
+  ActionRowBuilder,
 } from 'discord.js';
 import { getGuildIconUrl } from '../embeds';
 import { COLORS, BANNER_URL } from '../embeds/colors';
@@ -25,12 +28,12 @@ export async function handlePostFeeEmbed(
     const guild = interaction.guild;
     const guildIconUrl = getGuildIconUrl(guild);
 
-    // Create fee information embed
+    // Create fee information embed with interactive button
     const embed = new EmbedBuilder()
       .setColor(COLORS.INFO)
       .setTitle(`${E.ARROW} RapidEx Fee Structure`)
       .setDescription(
-        `Welcome to **RapidEx**! Here's our transparent fee structure for all cryptocurrency exchanges.`
+        `Welcome to **RapidEx**! Here's our transparent fee structure for all cryptocurrency exchanges.\n\n**Click the button below to calculate your fees!**`
       )
       .addFields(
         {
@@ -39,8 +42,18 @@ export async function handlePostFeeEmbed(
           inline: false,
         },
         {
+          name: `${E.PAYPAL} PayPal`,
+          value: `Minimum Fee: **$${MINIMUM_FEES.PAYPAL} USD**`,
+          inline: true,
+        },
+        {
           name: `${E.REVOLUT} Revolut`,
           value: `Minimum Fee: **$${MINIMUM_FEES.REVOLUT} USD**`,
+          inline: true,
+        },
+        {
+          name: `${E.WISE} Wise`,
+          value: `Minimum Fee: **$${MINIMUM_FEES.WISE} USD**`,
           inline: true,
         },
         {
@@ -49,32 +62,12 @@ export async function handlePostFeeEmbed(
           inline: true,
         },
         {
-          name: `${E.PAYPAL} PayPal`,
-          value: `Minimum Fee: **$${MINIMUM_FEES.PAYPAL} USD**`,
+          name: `${E.CASHAPP} Cash In Person`,
+          value: `Minimum Fee: **$${MINIMUM_FEES.CASH_IN_PERSON} USD**`,
           inline: true,
         },
         {
-          name: `${E.DEBTCARD} Wise`,
-          value: `Minimum Fee: **$${MINIMUM_FEES.WISE} USD**`,
-          inline: true,
-        },
-        {
-          name: `${E.BINANCE} Binance Gift Card`,
-          value: `Minimum Fee: **$${MINIMUM_FEES.OTHER} USD**`,
-          inline: true,
-        },
-        {
-          name: `${E.PAYSAFE} Paysafe Card`,
-          value: `Minimum Fee: **$${MINIMUM_FEES.OTHER} USD**`,
-          inline: true,
-        },
-        {
-          name: `${E.APPLE} Apple Pay`,
-          value: `Minimum Fee: **$${MINIMUM_FEES.OTHER} USD**`,
-          inline: true,
-        },
-        {
-          name: `${E.CASHAPP} CashApp`,
+          name: `Other Methods`,
           value: `Minimum Fee: **$${MINIMUM_FEES.OTHER} USD**`,
           inline: true,
         }
@@ -99,12 +92,19 @@ This ensures competitive rates while maintaining service quality.`,
       embed.setThumbnail(guildIconUrl);
     }
 
-    // Send the embed to the channel (not ephemeral)
-    if (interaction.channel && 'send' in interaction.channel) {
-      await interaction.channel.send({
-        embeds: [embed],
-      });
-    }
+    // Create button to start fee calculation
+    const button = new ButtonBuilder()
+      .setCustomId('fee_calc_start')
+      .setLabel('💱 Calculate Fees')
+      .setStyle(ButtonStyle.Primary);
+
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    // Send the embed with button to the channel (persistent)
+    await interaction.channel?.send({
+      embeds: [embed],
+      components: [row],
+    });
 
     // Confirm to the user (ephemeral)
     await interaction.editReply({
@@ -112,11 +112,13 @@ This ensures competitive rates while maintaining service quality.`,
     });
 
     logger.info(
-      `Fee embed posted to channel ${interaction.channelId} in guild ${interaction.guildId}`
+      { channelId: interaction.channelId, guildId: interaction.guildId },
+      'Fee embed posted'
     );
   } catch (err) {
     logger.error(
-      `Failed to post fee embed: ${String(err)}`
+      { error: String(err), guildId: interaction.guildId },
+      'Failed to post fee embed'
     );
     await interaction.editReply(
       `❌ Failed to post fee embed: ${String(err)}`
