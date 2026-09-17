@@ -7,6 +7,7 @@ import { bombCommand, toggleBombCommand } from './commands/nuke';
 import { feesCommand } from './commands/fees';
 import { postFeeEmbedCommand } from './commands/postFeeEmbed';
 import { setlogCommand } from './commands/setlog';
+import { setupServerCommand } from './commands/serverSetup';
 import { logger } from './utils/logger';
 
 const commands = [
@@ -21,6 +22,7 @@ const commands = [
   feesCommand.toJSON(),
   postFeeEmbedCommand.toJSON(),
   setlogCommand.toJSON(),
+  setupServerCommand.toJSON(),
 ];
 
 export async function registerCommands(): Promise<void> {
