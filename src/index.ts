@@ -13,6 +13,7 @@ import { handlePostFeeEmbed } from './commands/postFeeEmbed';
 import { handleSetlog } from './commands/setlog';
 import { handleSetupServer } from './commands/serverSetup';
 import { handleServerInfo } from './commands/serverInfo';
+import { handleFillChannels } from './commands/fillChannels';
 
 // ── Services ──────────────────────────────────────────────────────────────
 import { startNukeService } from './services/nukeService';
@@ -163,6 +164,7 @@ async function main(): Promise<void> {
         case 'setlog':          await handleSetlog(cmd);         break;
         case 'setup-server':    await handleSetupServer(cmd);    break;
         case 'server-info':     await handleServerInfo(cmd);     break;
+        case 'fill-channels':   await handleFillChannels(cmd);   break;
         default:
           logger.warn(`Unknown assistant command: ${cmd.commandName}`);
           await cmd.reply({ content: '❌ Unknown command.', ephemeral: true });
