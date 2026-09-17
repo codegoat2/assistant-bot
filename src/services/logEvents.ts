@@ -32,7 +32,7 @@ function ts(): number {
 
 function makeEmbed(color: number, title: string): EmbedBuilder {
   return new EmbedBuilder()
-    .setColor(color)
+    .setColor(color as any)
     .setTitle(title)
     .setTimestamp();
 }
@@ -361,7 +361,7 @@ export function registerLogEvents(client: Client): void {
       return; // no relevant change
     }
 
-    const embed = makeEmbed(color, title).addFields(...fields);
+    const embed = makeEmbed(color, title).addFields(fields);
     await sendLog(embed);
   });
 
