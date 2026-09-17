@@ -6,6 +6,7 @@ import { announceCommand, embedCommand, broadcastCommand } from './commands/embe
 import { bombCommand, toggleBombCommand } from './commands/nuke';
 import { feesCommand } from './commands/fees';
 import { postFeeEmbedCommand } from './commands/postFeeEmbed';
+import { setlogCommand } from './commands/setlog';
 import { logger } from './utils/logger';
 
 const commands = [
@@ -19,6 +20,7 @@ const commands = [
   toggleBombCommand.toJSON(),
   feesCommand.toJSON(),
   postFeeEmbedCommand.toJSON(),
+  setlogCommand.toJSON(),
 ];
 
 export async function registerCommands(): Promise<void> {

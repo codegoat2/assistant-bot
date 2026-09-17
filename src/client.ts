@@ -10,8 +10,13 @@ export function createAssistantClient(): Client {
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.MessageContent,
       GatewayIntentBits.DirectMessages,
+      GatewayIntentBits.GuildModeration,      // bans
+      GatewayIntentBits.GuildVoiceStates,     // voice join/leave/mute
+      GatewayIntentBits.GuildInvites,         // invite create/delete
+      GatewayIntentBits.GuildEmojisAndStickers, // emoji/sticker events
+      GatewayIntentBits.GuildScheduledEvents, // scheduled event events
     ],
-    partials: [Partials.Channel, Partials.Message],
+    partials: [Partials.Channel, Partials.Message, Partials.GuildMember],
   });
   return _client;
 }
