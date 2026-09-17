@@ -18,33 +18,44 @@ export const toggleBombCommand = new SlashCommandBuilder()
   .setDefaultMemberPermissions(0);
 
 export async function handleBomb(interaction: ChatInputCommandInteraction): Promise<void> {
-  await interaction.deferReply({ ephemeral: true });
-
   const channelId = config.BOMB_CHANNEL_ID || interaction.channelId;
 
   try {
     const client = interaction.client;
     const channel = await client.channels.fetch(channelId);
     if (!channel || !channel.isTextBased()) {
-      await interaction.editReply(`${E.NO} Channel not found.`);
+      await interaction.reply({ content: `${E.NO} Channel not found.`, ephemeral: true });
       return;
     }
 
     const textChannel = channel as TextChannel;
+
+    // Acknowledge immediately (ephemeral so it's not in the target channel's history)
+    // If the bomb channel is the same as where the command was run, reply before purging
+    await interaction.reply({ content: `${E.LOCK} Bombing channel...`, ephemeral: true });
+
     const guild = textChannel.guild;
     const guildIconUrl = getGuildIconUrl(guild);
     const nextNuke = new Date(Date.now() + 60 * 60 * 1000);
 
-    // Purge all messages first, then post the nuke embed
+    // Purge all messages, then post the nuke embed
     await purgeChannel(textChannel);
 
     await textChannel.send({ 
       embeds: [nukeEmbed(textChannel.name ?? 'channel', nextNuke, guildIconUrl)] 
     });
 
-    await interaction.editReply(`${E.LOCK} Channel bombed!`);
+    // Update the ephemeral reply to confirm completion
+    await interaction.editReply(`${E.CHECK} Channel bombed!`);
   } catch (err) {
-    await interaction.editReply(`${E.NO} Failed: ${String(err)}`);
+    const msg = `${E.NO} Failed: ${String(err)}`;
+    try {
+      if (interaction.replied || interaction.deferred) {
+        await interaction.editReply(msg);
+      } else {
+        await interaction.reply({ content: msg, ephemeral: true });
+      }
+    } catch { /* interaction timed out */ }
   }
 }
 

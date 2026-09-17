@@ -12,23 +12,32 @@ let bombInterval: NodeJS.Timeout | null = null;
  */
 export async function purgeChannel(textChannel: TextChannel): Promise<void> {
   let deleted = 0;
-  // Keep fetching and deleting until there's nothing left to bulk-delete
+
   while (true) {
     const messages = await textChannel.messages.fetch({ limit: 100 });
     if (messages.size === 0) break;
 
-    // bulkDelete requires at least 2 messages; for a single message delete individually
-    if (messages.size === 1) {
-      await messages.first()!.delete();
-      deleted += 1;
+    // Filter out messages that can't be deleted (system messages, ephemeral, etc.)
+    const deletable = messages.filter(m => m.deletable);
+    if (deletable.size === 0) break;
+
+    if (deletable.size === 1) {
+      try {
+        await deletable.first()!.delete();
+        deleted += 1;
+      } catch { /* ignore individual delete failures */ }
       break;
     }
 
-    const result = await textChannel.bulkDelete(messages, true); // true = filter out >14-day-old msgs
+    // bulkDelete with filterOld=true silently skips messages >14 days old
+    const result = await textChannel.bulkDelete(deletable, true);
     deleted += result.size;
 
-    // If nothing was deleted (all remaining messages are >14 days old), stop to avoid infinite loop
+    // If nothing was deleted (all remaining are >14 days old), stop to avoid infinite loop
     if (result.size === 0) break;
+
+    // Small pause to avoid hitting rate limits on large channels
+    await new Promise(r => setTimeout(r, 1000));
   }
 
   console.log(`[NukeService] Purged ${deleted} messages from #${textChannel.name}`);
