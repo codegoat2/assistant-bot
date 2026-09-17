@@ -25,7 +25,7 @@ export async function sendLog(embed: EmbedBuilder): Promise<void> {
     const client = getAssistantClient();
     const channel = await client.channels.fetch(logChannelId);
     if (!channel || !channel.isTextBased()) return;
-    await (channel as TextChannel).send({ embeds: [embed.toJSON()] });
+    await (channel as TextChannel).send({ embeds: [embed] });
   } catch (err) {
     logger.warn(`[LogService] Failed to send log: ${String(err)}`);
   }

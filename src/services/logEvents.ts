@@ -314,7 +314,7 @@ export function registerLogEvents(client: Client): void {
     if (!member) return;
 
     let title = '';
-    let color = COLORS.INFO;
+    let color: number = COLORS.INFO;
     const fields: { name: string; value: string; inline?: boolean }[] = [
       { name: 'User', value: `${member.user.tag} (${member.id})`, inline: true },
     ];
@@ -509,7 +509,7 @@ export function registerLogEvents(client: Client): void {
   // ── Scheduled Event Deleted ───────────────────────────────────────────────
   client.on(Events.GuildScheduledEventDelete, async (event) => {
     const embed = makeEmbed(COLORS.ERROR, '📅 Scheduled Event Deleted')
-      .addFields({ name: 'Name', value: event.name, inline: true });
+      .addFields({ name: 'Name', value: event.name ?? 'Unknown', inline: true });
     await sendLog(embed);
   });
 
