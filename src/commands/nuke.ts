@@ -1,5 +1,5 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
-import { startNukeService, stopNukeService } from '../services/nukeService';
+import { SlashCommandBuilder, ChatInputCommandInteraction, TextChannel } from 'discord.js';
+import { startNukeService, stopNukeService, purgeChannel } from '../services/nukeService';
 import { getGuildIconUrl, nukeEmbed, E } from '../embeds';
 import { config } from '../config/env';
 
@@ -30,10 +30,13 @@ export async function handleBomb(interaction: ChatInputCommandInteraction): Prom
       return;
     }
 
-    const textChannel = channel as any;
+    const textChannel = channel as TextChannel;
     const guild = textChannel.guild;
     const guildIconUrl = getGuildIconUrl(guild);
     const nextNuke = new Date(Date.now() + 60 * 60 * 1000);
+
+    // Purge all messages first, then post the nuke embed
+    await purgeChannel(textChannel);
 
     await textChannel.send({ 
       embeds: [nukeEmbed(textChannel.name ?? 'channel', nextNuke, guildIconUrl)] 
