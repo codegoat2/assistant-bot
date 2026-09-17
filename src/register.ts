@@ -8,6 +8,7 @@ import { feesCommand } from './commands/fees';
 import { postFeeEmbedCommand } from './commands/postFeeEmbed';
 import { setlogCommand } from './commands/setlog';
 import { setupServerCommand } from './commands/serverSetup';
+import { serverInfoCommand } from './commands/serverInfo';
 import { logger } from './utils/logger';
 
 const commands = [
@@ -23,6 +24,7 @@ const commands = [
   postFeeEmbedCommand.toJSON(),
   setlogCommand.toJSON(),
   setupServerCommand.toJSON(),
+  serverInfoCommand.toJSON(),
 ];
 
 export async function registerCommands(): Promise<void> {

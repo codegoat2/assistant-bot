@@ -10,6 +10,7 @@ import {
   EmbedBuilder,
 } from 'discord.js';
 import { COLORS } from '../embeds/colors';
+import { fillAllChannels } from './channelFillService';
 
 // ---------------------------------------------------------------------------
 // Role definitions
@@ -886,6 +887,10 @@ export async function runServerSetup(guild: Guild, progress: SetupProgress): Pro
   }
 
   await onStep(`Done! Created ${createdRoles.size} roles and ${channelCount} channels across ${SERVER_STRUCTURE.length} categories.`);
+
+  // ── 5. Fill channels with panels and embeds ────────────────────────────
+  await onStep('Filling channels with panels...');
+  await fillAllChannels(guild, { onStep });
 }
 
 // ---------------------------------------------------------------------------
